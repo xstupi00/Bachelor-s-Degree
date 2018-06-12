@@ -1,0 +1,322 @@
+#!/usr/bin/env bash
+
+# FILE: dirgraph
+# COURSE: Operations systems - 1.Homework
+# AUTHOR: Šimon Supinský, xstupi00@stud.fit.vutbr.cz
+# DATE: 26.03.2017
+# BRIEF: Script that examines the directory and creates a report on its contents. The subject
+#	 recursive exploring of directory are numbers of files and folders, file types (by file content) and 
+# 	 file size. The output of the script is a text report. The script is configurable using the command lines.
+#
+# USAGE: dirgraph [-i FILE_ERE] [-n] [DIR]
+#	 -i -> ignore directory or files with name "FILE_ERE"
+# 	 "FILE_ERE" -> extended regular expression for option 'i' 
+# 	 -n -> normalization note to only one line in ratio
+# 	 "DIR" -> 'investigating' directory
+
+# correctly as specified
+POSIXLY_CORRECT=yes
+
+# pattern to match
+FERE=""
+# size statistics
+SIZE_ST=""
+# count of directories
+DCOUNT=1
+# count of file
+FCOUNT=0
+# declaration of associative array
+declare -A TYPE_ARR
+# counter
+COUNTER=0
+# switch for options
+iParam=false
+nParam=false
+# pattents for options
+ONLY_I=""
+ONLY_N=""
+
+while getopts ":i:n" opt
+do
+	case $opt in
+		i)
+			if [ -z "$ONLY_I" ];then
+				ONLY_I="1"
+				iParam=true
+				FERE=$OPTARG
+			else
+				>&2 echo "Duplicate of option -i!"
+				exit 1
+			fi
+			;;
+		n)
+			if [ -z "$ONLY_N" ];then
+                                ONLY_N="1"
+                                nParam=true
+                        else
+                                >&2 echo "Duplicate of option -n!"
+                                exit 1
+                        fi
+                        ;;
+        	:) 	>&2 echo "Syntax: dirgraph [-i FILE_ERE] [-n] [DIR]"; exit 1;;
+		\?)	>&2 echo "Syntax: dirgraph [-i FILE_ERE] [-n] [DIR]"; exit 1;;
+	esac
+done
+
+# shift parameters
+shift $(($OPTIND-1))
+# retrieving last parameters
+DIR="$1"
+
+
+stat_dir() {
+   	# local for recursion
+    	local CONTENT="`ls -A "$1"`" 2> /dev/null
+    	if [ -n "$CONTENT" ];then
+        	# reading the content for each item
+        while read -r file;do
+        	# search pattern with grep
+		if [ $iParam == true ];then
+        		RES="`echo "$file"|grep -E "$FERE"`"
+        		if [ -n "$RES" ];then
+        			continue
+        		fi
+		fi
+            	# concat with path
+            	f="$1/$file"
+            	if [ -d "$f" ];then
+                	# recursive call
+                	DCOUNT=$((DCOUNT+1))
+                	stat_dir "$f"
+	    	# ignore symlink
+	    	elif [ -L "$f" ];then
+			continue;
+            	elif [ -f "$f" ];then
+                	FCOUNT=$((FCOUNT+1))
+                	# get size and info
+			SIZE_ST+="$(wc -c <"$f")"
+                	SIZE_ST+=$'\n'
+                	TMP="`file -b "$f"`"
+			length=${#TMP}
+			# editing the name type as specified
+                if [ $length -le 40 ];then
+                        max_count_sizes=$((43-length))
+			# inserting necessary count of spaces
+                        for (( j=0; j < $max_count_sizes; ++j ))
+                        do
+                                TMP="`echo "$TMP"|sed -e 's/./& /'"$length"''`"
+                        done
+			# inserting colon and space
+			TMP="`echo "$TMP"|sed -e 's/./&:/43;s/./& /44'`"
+                else
+                        length=$((length-40))
+			# cut on the the permissible length
+			TMP="`echo "$TMP"| cut -c -40`"
+			# inserting trippledots, colon and space
+                        TMP="`echo "$TMP"|sed -e 's/./&./40;s/./&./41;s/./&./42;s/./&:/43;s/./& /44'`"
+                fi
+                # if exists key -> increment
+                if [  -n "${TYPE_ARR["$TMP"]}" ];then
+		    	let '++TYPE_ARR["$TMP"]'
+                else
+                    	TYPE_ARR["$TMP"]=1
+                fi
+            fi
+            # else for: symlink, block device, ...
+        done <<< "$CONTENT" 2> /dev/null
+    fi
+}
+
+find_max_size() {
+   	# predecessor
+    	pre=0
+    	max_count_sizes=0
+    	# loop over values of bytes
+    	for i in $@;do
+        	CNT="`echo "$SIZE_ST"|awk -v b1=$pre -v b2=$i '(b1 <= $1) && ($1 < b2)\
+            	{print}'|wc -l`"
+		# find max value "size histogram"
+		if [ $CNT -gt $max_count_sizes ];then
+			max_count_sizes=$CNT
+		fi
+		pre="$i"
+     	done
+     	CNT="`echo "$SIZE_ST"|awk -v bound=$pre '($1 > bound) {print}'|wc -l`"
+     	# if is greather than last
+     	if [ $CNT -gt $max_count_sizes ];then
+        	max_count_size=$CNT
+     	fi
+}
+
+filter_sizes() {
+ 	# predecessor
+    	pre=0
+    	# loop over values of bytes
+    	for i in $@;do
+        	CNT="`echo "$SIZE_ST"|awk -v b1=$pre -v b2=$i '(b1 <= $1) && ($1 < b2)\
+            	{print}'|wc -l`"
+		# assignment to the category
+        	if [ $i == 100 ];then
+        		printf "  <$i B  : "
+    		elif [ $i -ge 1024 -a $i -le 102400 ];then
+        		tmp=$((i/1024))
+			if [ $tmp == 1 ];then
+				printf "  <$tmp KiB  : "
+			elif [ $tmp == 10 ];then
+				printf "  <$tmp KiB : "
+			else
+        			printf "  <$tmp KiB: "
+			fi
+    		elif [ $i -ge 1048576 -a $i -le 104857600 ];then
+        		tmp=$((i/1024/1024))
+			if [ $tmp == 1 ];then
+                       		printf "  <$tmp MiB  : "
+                	elif [ $tmp == 10 ];then
+   	               		printf "  <$tmp MiB : "
+                	else
+                        	printf "  <$tmp MiB: "
+                	fi
+		elif [ $i == 1073741824 ];then
+         		tmp=$((i/1024/1024/1024))
+        		printf "  <$tmp GiB  : "
+    		fi
+
+		# check presence of terminal
+		if [ -t 1 ];then
+                	max_length=$(tput cols)
+			max_length=$((max_length-13))
+        	else
+                max_length=$((79-12))
+        	fi
+
+		# for -n
+		# calculating the ratio for normalization
+		if [ $max_count_sizes -gt $max_length -a $nParam == true ];then
+			CNT=$((max_length*CNT/max_count_sizes))
+		fi
+
+		# print counts
+		for (( j=0; j < $CNT; ++j ))
+        	do
+                	printf "#"
+        	done
+		pre=$i
+		printf "\n"
+    	done
+	# get greater than last
+    	tmp=$(($pre/1024/1024/1024))
+    	printf "  >=$tmp GiB : "
+    	CNT="`echo "$SIZE_ST"|awk -v bound=$pre '($1 > bound) {print}'|wc -l`"
+    	for (( j=0; j < $CNT; ++j ))
+    	do
+    		printf "#"
+    	done
+    	printf "\n"
+}
+
+find_max_types(){
+	# find max value in "type histogram"
+	max_count_types=0
+        for i in "${!TYPE_ARR[@]}";do
+                if [ ${TYPE_ARR["$i"]} -ge $max_count_types ];then
+                	max_count_types=${TYPE_ARR["$i"]}
+                fi
+        done
+
+	# check presence of terminal
+	if [ -t 1 ];then
+		max_size=$(tput cols)
+		max_size=$((max_size-48))
+	else
+		max_size=$((79-47))
+	fi
+}
+
+
+# iterate over dict
+filter_types() {
+	maximum=0;
+	# guarantee print in ascending order
+	# finding max value
+        for i in "${!TYPE_ARR[@]}";do
+                if [ ${TYPE_ARR["$i"]} -ge $maximum ];then
+                        maximum=${TYPE_ARR["$i"]}
+                        value=${TYPE_ARR["$i"]}
+                        key="$i"
+                fi
+        done
+	# print each category 
+        printf "  $key"
+
+	# for -n
+	# calculating the ratio for normalization
+	if [ $nParam == true -a $max_count_types -gt $max_size ];then
+		prev_val=$value
+		value=$((max_size*value/max_count_types))
+		prev_val=$((prev_val-value))
+	fi
+	
+	# print counts
+	for (( i=0; i < $value; ++i ))
+        do
+                printf "#"
+                COUNTER=$((COUNTER+1))
+        done
+
+	# control count writing # in original
+	if [ $nParam == true -a $max_count_types -gt $max_size ];then
+		COUNTER=$((COUNTER+prev_val))
+	fi
+
+        printf "\n"
+        unset 'TYPE_ARR[$key]'
+}
+
+# function on connection all parts script
+main() {
+	echo "Root directory: $DIR"
+        stat_dir "$DIR"
+	find_max_types
+        echo "Directories: $DCOUNT"
+        echo "All files: $FCOUNT"
+        echo "File size histogram:"
+	# send size in bytes
+	find_max_size 100 1024 10240 102400 1048576 10485760 104857600 1073741824
+        filter_sizes 100 1024 10240 102400 1048576 10485760 104857600 1073741824
+	echo "File type histogram:"
+
+	for (( l=0; l < 10; ++l ))
+        do
+                if [ "$COUNTER" == "$FCOUNT" ];then
+                        break
+                else
+                        filter_types
+                fi
+        done
+}
+
+# directory not specified by user
+if [ -z "$DIR" ];then
+        DIR="."
+fi
+
+# not directory
+if [ ! -d "$DIR" ];then
+        >&2 echo "Error: no such directory!"
+        exit 1
+# name extended regular expression covers root directory
+elif [ "$FERE" == "$DIR" ];then
+        >&2 echo "Error: Match FILE_ERE and DIR!"
+        exit 1
+# canceled PATH
+elif [ "$PATH" = "" ];then
+	>&2 echo "Error: PATH does not existing!"
+        exit 1
+# bad count of arguments
+elif [ $# -gt 1 ];then
+       >&2 echo "Error: Bad format of arguments!"
+        exit 1
+else
+        main
+	exit 0
+fi

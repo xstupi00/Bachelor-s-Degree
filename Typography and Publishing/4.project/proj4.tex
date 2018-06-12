@@ -1,0 +1,61 @@
+\documentclass[11pt,a4paper,titlepage]{article}
+\usepackage[left=2cm,text={17cm,24cm},top=3cm]{geometry}
+\usepackage[czech]{babel}
+\usepackage[utf8]{inputenc}
+\bibliographystyle{czplain}
+\usepackage{times}
+\usepackage{enumitem}
+\usepackage[strings]{underscore}
+\providecommand{\myuv}[1]{\quotedblbase #1\textquotedblleft}
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\textsc{\Huge {Vysoké učení technické v Brně} \\ \medskip \huge {Fakulta informačních technologií}}\\
+\vspace{\stretch{0.382}}
+{ \LARGE Typografie a publikování\,--\,3. projekt \\ \vspace{\stretch{0.01}}  \Huge {Bibliografické citácie}}\\
+\vspace{\stretch{0.618}}
+{\Large \today \hfill Šimon Stupinský}
+\end{center}
+\end{titlepage}
+
+
+\section{Úvod} 
+V tomto článku si priblížime programovacie jazyky ako celok, generácie jednotlivých jazykov a pozrieme sa na porovnanie dvoch prístupov. V závere sa v krátkosti pozrieme aj na konkrétny jazyk, ktorým bude \textit{Jazyk C}.
+
+\section{Programovací jazyk} 
+Nie nadarmo sa hovorí: \textit{\myuv{Koľko jazykov vieš, toľkokrát si človekom}}. \cite{quotation:web} \\
+V dnešnej modernej dobe to platí aj vo svete počítačov, kde sa problémy riešia práve prostredníctvom počítačov, v rámci rôznych problémových domén ako sú vedecké výpočty, spracovanie textu, programovanie databáz, obchodné aplikácie, programovanie systému, či vývoj inteligentných systémov. Všetky tieto domény sú úplne odlišné navzájom s rôznymi požiadavkami, ale jedno majú spoločné, a to je riešenie s využitím programovacích jazykov. \cite{Introduction:Book} \\
+Programovacie jazyky sú základným komunikačným nástrojom medzi počítačom a programátorom, ktorý v ňom formuluje postup riešenia daného problému. Dnes poznáme veľké množstvo programovacích jazykov, ich prehľad si môžeme prezrieť v spísanom zozname, ktorý však nezahrňuje všetky momentálne existujúce jazyky viz \cite{List:Wiki}.
+
+\section{Generácie}
+K popisu riešenia problémov v spojení s počítačom, musíme poznať sadu príkazov, ktoré počítač dokáže pochopiť a vykonávať. Preto sa jednotlivé jazyky delia do rôznych úrovni na základe toho, ako ich počítač dokáže rozoznať. \cite{Generation:Book}
+\begin{itemize}
+\item \textbf{Machine language -} programovanie v binárnom kóde, ťažká práca s nimi
+\item \textbf{Assembly language -} assemblery, symbolické vyjadrenie binárnych inštrukcií
+\item \textbf{High level language -} procedurálne jazyky, kde jeden príkaz je transformovaný do 5-10 inštrukcií v binárnom kóde
+\item \textbf{Four generation language -} neprocedurálne jazyky, jeden príkaz je transformovaný do 30-50 binárnych inštrukcií, menšia efektivita pri realizácii kódu
+\end{itemize}
+
+\section{Typová kontrola}
+Väčšina programovacích jazykov používa \textit{dynamickú} typovú kontrolu, no nájdu sa aj jazyky so \textit{statickou}. U dynamicky typovaných jazykov dochádza ku kontrole v dobe behu programu, u staticky typovaných v dobe kompilácie. Dynamický prístup rozširuje možnosti statických jazykov s univerzálnymi dátovými typmi, zjednodušuje programy pri ktorých je nutné manipulovanie s inými konštrukciami. \cite{Dynamic:Book} \\ 
+Pri vývoji rozsiahlych projektov je možné používať kombináciu týchto dvoch odlišne orientovaných skupín jazykov. Výhodou staticky orientovaných jazykov je, že dokážu detekovať chyby už v čase kompilácie a tým môžu viesť k zvýšeniu rýchlosti kódu a tým aj kvality výsledného produktu. Práve kombináciou výhod oboch skupín, vzniká koncept nazývaný \textit{soft typing} viz \cite{Master:tesis}. 
+
+\newpage
+
+\section{Jazyk C}
+Pred niekoľkými rokmi zaznamenal programovací jazyk C veľký progres a stal sa jedným z najviac používaných jazykov pre tvorbu aplikácii a softvérových systémov bežiacich na mikropočítačových systémoch. Patrí medzi \textit{nízkoúrovňové}, \textit{minimalistické} a \textit{kompilované} jazyky s bohatou históriou a vývojom. \cite{C:Journal} \\
+Jazyk C podlieha už od svojho vzniku určitým štandardom. Prvý špecializovaný štandard bol vyvíjaný \textit{American National Standards Insitute - ANSI}, v roku 1989 pod menom \textit{C89 standard}. Ďalšia revízia bola publikovaná v roku 1999, so zmenami ktoré priniesli výhodu pre prácu s dátovymi typmi a ďalšími zmenami, pod názvom \textit{C99 Standard}. \cite{ANSI:web}
+
+\section{Motivácia}
+Programovacie pracovné miesta sú na trhu čím ďalej tým viac vzácnejšie aj napriek tomu, že počet študentov absolvujúcich kurzy IT alebo výpočtovej techniky rastie. Problém pravdepodobne spočíva v tom, že u mnohých absolventoch hneď po nástupe, chýbajú viaceré zručnosti a vedomosti v rôznych oblastiach IT, či schopnosť pracovať samostatne. \cite{Motivation:article} \\
+Existujú rôzne cesty ktorými sa dá naučiť nový jazyk, či už zdokonaľovať získané znalosti. Medzi jedne z hlavných stratégii učenia sa zaraďuje učenie \textit{deduktívne} a učenie \textit{induktívne}. \cite{Master1:tesis} 
+  
+\newpage
+
+\renewcommand{\refname}{Referencie}
+\bibliography{zdroje}
+
+\end{document}
+
+

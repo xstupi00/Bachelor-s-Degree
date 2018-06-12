@@ -1,0 +1,208 @@
+\documentclass{beamer}
+\mode<presentation> {
+\usetheme{AnnArbor}
+\setbeamercovered{transparent}
+}
+\usecolortheme{wolverine}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{times}
+\usepackage{graphics}
+\usepackage{picture}
+\usepackage[ruled,czech,linesnumbered,vlined,longend,noline]{algorithm2e}
+\usepackage{algorithmic}
+\usepackage[shortlabels]{enumitem}
+\usepackage[square,numbers]{natbib}
+\bibliographystyle{plainnat}
+
+\setlist[itemize]{label=\textbullet}
+
+\makeatletter
+\renewcommand\@biblabel[1]{\textbullet}
+\makeatother
+
+\title{Algorithm and its properties}
+\author{\texorpdfstring{Šimon Stupinský}{AUTHOR}}
+\titlegraphic{\includegraphics[width=150pt,height=50pt]{logo.png}\quad\includegraphics[width=150pt,height=50pt]{logo1.png}}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Algorithm}
+  \framesubtitle{General overview}
+  \begin{itemize}
+    \item{self\,-- contained sequence of actions to be performed}
+    \item{effective method that can be expressed within a~finite amount of space and time}
+    \item{informal definition could be, set of rules that precisely defines a~sequence of operations}
+    \item{the word 'algorithm' is a combination of the Latin word \texttt{algorismus}, and the Greek word \texttt{arithmos}, i.e. meaning "number"}
+    \nocite{wiki}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Properties of Algorithm}
+  \begin{itemize}
+    \item<1->{\textbf{\large{Finiteness}} \,-- an algorithm terminates after a finite numbers of steps}
+    \item<2->{\textbf{\large{Effectiveness}} \,-- it consists of basic instructions that are realizable and they can be performed by using the given inputs in~a finite amount of time}
+    \item<3->{\textbf{\large{Definiteness}} \,-- each step in algorithm is unambiguous, action specified by the step cannot be interpreted in multiple ways}
+    \item<4->{\textbf{\large{Input}} \,-- accepts zero or more inputs}
+    \item<5->{\textbf{\large{Output}} \,-- it produces at least one output}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Runtime Analysis}
+  \framesubtitle{Most important aspects?}
+  \begin{itemize}
+    \item{it is often easy to come up with an algorithm to solve a problem, but if the algorithm is too slow, it’s back to the drawing board}
+    \item{the execution time of many complex algorithms can vary due to factors other than the size of the input}
+  \end{itemize}
+  \begin{table}[h]
+    \begin{center}
+    \catcode`\-=12
+    \begin{tabular}{| l | l |} \hline
+      O($\ln{N}$) & $10^{-7}$ seconds \\
+      O($N$) & $10^{-6}$ seconds \\
+      O($N*\ln{N}$) & $10^{-5}$ seconds \\
+      O($N^{2}$) & $10^{-4}$ seconds \\
+      O($N^{6}$) & 3 minutes \\
+      O($2^{N}$) & $10^{14}$ years \\
+      O($N!$) & $10^{142}$ year \\ \hline
+      \end{tabular}
+      \caption{Approximate completion time for algorithms, N = 100} \nocite{table}
+     \end{center}
+   \end{table}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Insertion Sort vs. Merge Sort}
+  \framesubtitle{Good algorithm or supercomputer}
+   \begin{table}[h]
+    \begin{center}
+    \catcode`\-=12
+    \begin{tabular}{| c | c | c | c |} \hline
+      \textbf{Computer Type} & \multicolumn{3}{|c|}{\textbf{Number of Inputs}} \\ \cline{1-4}
+       & Thousand & Milion & Bilion \\ \cline{1-4}
+      Home/PC & Instant & 2.8\,hours & 317\,years \\ \cline{1-4}
+      Super Computer & Instant & 1\,second & 1\,week \\ \cline{1-4} \hline
+      \end{tabular}
+      \caption{\textbf{Insertion Sort} approach with Time Complexity is O($N^{2}$)}
+     \end{center}
+   \end{table}
+   \begin{table}[h]
+    \begin{center}
+    \catcode`\-=12
+    \begin{tabular}{| c | c | c | c |} \hline
+      \textbf{Computer Type} & \multicolumn{3}{|c|}{\textbf{Number of Inputs}} \\ \cline{1-4}
+       & Thousand & Milion & Bilion \\ \cline{1-4}
+      Home/PC & Instant & 1\,second & 18\,minutes \\ \cline{1-4}
+      Super Computer & Instant & Instant & Instant \\ \cline{1-4} \hline
+      \end{tabular}
+      \caption{\textbf{Merge Sort} approach with Time Complexity O($N*\ln{N}$)}
+     \end{center}
+   \end{table} \nocite{statistics}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Example}
+  \framesubtitle{Simple example algorithm}
+  \begin{algorithm}[H]
+    \SetKwInput{Input}{Input }
+    \SetKwInOut{Output}{Output }
+    \SetNlSty{}{}{:}
+    \SetInd{1em}{1em}
+    \SetNlSkip{-1.2em}
+    \Input{A finite set $A=\{a_1, a_2, \ldots, a_n\}$ of integers}
+    \Output{The largest element in the set}
+    \Indp \Indp 
+    \BlankLine
+    $max \gets a_1$\;
+    \For{$i \gets 2$ \textbf{to} $n$} {
+    \If{$a_i > max$} {
+      $max \gets a_i$\;
+      }
+    }
+    \Return{$max$}\;
+  \end{algorithm} \nocite{example}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Randomized algorithms}
+  \framesubtitle{Monte Carlo vs. Las Vegas}
+  \begin{itemize}
+    \item{throws coins during execution, it means the result of the algorithm might be different for each run on~the same input}
+    \item{usually have the effect of perturbing the input, or put it differently, the input looks random, which makes bad cases very seldom}
+    \item{often are conceptually very easy to implement, at the same time they are in run time often superior to their deterministic counterparts}
+    \item{\textbf{Las Vegas} algorithm will always produce the same result on a~given input, randomization will only affect the order of the internal executions}
+    \item{in the case \textbf{Monte Carlo} algorithms, the result may might change, even be wrong, algorithm will produce the correct result with a~certain probability}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Representations of Flowchart}
+  \begin{figure}
+   \begin{center}
+    \begin{picture}(260, 100)(0,0)
+      \multiput(0,0)(0,50){3} {
+       \put(0,0){\vector(0,-1){30}}
+       \put(-30,-30){\line(1,0){60}}
+       \put(30,-30){\line(0,-1){20}}
+       \put(-30,-30){\line(0,-1){20}}
+       \put(-30,-50){\line(1,0){60}}
+      }
+      \multiput(0,0)(120,0){2} {
+       \put(80,0){\vector(0,-1){30}}
+       \put(50,0){\line(1,0){60}}
+       \put(50,0){\line(0,1){20}}
+       \put(110,0){\line(0,1){20}}
+       \put(50,20){\line(1,0){60}}
+       \put(80,50){\vector(0,-10){30}}
+      }
+      \put(80,50){\line(1,0){30}}
+      \put(200,50){\line(-1,0){30}}
+      \put(110,50){\line(2,1){30}}
+      \put(170,50){\line(-2,1){30}}
+      \put(110,50){\line(2,-1){30}}
+      \put(170,50){\line(-2,-1){30}}
+      \put(245,-20){\line(1,0){60}}
+      \put(245,-20){\line(0,1){20}}
+      \put(305,-20){\line(0,1){20}}
+      \put(245,0){\line(1,0){60}}
+      \put(275,30){\vector(0,-1){30}}
+      \put(275,30){\line(-2,1){30}}
+      \put(275,30){\line(2,1){30}}
+      \put(275,60){\line(-2,-1){30}}
+      \put(275,60){\line(2,-1){30}}
+      \put(275,75){\vector(0,-1){15}}
+      \put(245,75){\line(1,0){60}}
+      \put(245,75){\line(0,1){20}}
+      \put(305,75){\line(0,1){20}}
+      \put(245,95){\line(1,0){60}}
+      \put(275,-20){\line(0,-1){15}}
+      \put(275,-35){\line(-1,0){35}}
+      \put(240,-35){\line(0,1){105}}
+      \put(240,70){\vector(1,0){35}}
+      \put(-45,110){Sequence of commands}
+      \put(95, 110){Branching calculation}
+      \put(260,110){Loop}
+    \end{picture}
+    \end{center}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+        \frametitle{Sources}
+        \bibliography{references.bib}
+\end{frame}
+
+\end{document}
+
+
