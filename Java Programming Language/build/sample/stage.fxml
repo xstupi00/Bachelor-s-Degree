@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefHeight="486.0" prefWidth="771.0" minHeight="486.0" minWidth="771.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem fx:id="newItem" mnemonicParsing="false" text="New" />
+            <MenuItem fx:id="loadItem" mnemonicParsing="false" text="Open…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="saveItem" mnemonicParsing="false" text="Save As…" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem mnemonicParsing="false" text="Copy" />
+            <MenuItem mnemonicParsing="false" text="Paste" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Select All" />
+            <MenuItem mnemonicParsing="false" text="Unselect All" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Zatancuj" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <ToolBar prefWidth="640.0">
+         <items>
+            <Button mnemonicParsing="false" onAction="#buttonAdd" text="Add" />
+            <Button mnemonicParsing="false" onAction="#buttonCalc" text="Calculate" />
+            <Button fx:id="step" mnemonicParsing="false" text="Step by step, day by day" />
+            <Label text="      -> " />
+            <Label fx:id="msg" text="Hello!" />
+         </items>
+      </ToolBar>
+      <Pane fx:id="schemePane" VBox.vgrow="ALWAYS" />
+  </children>
+</VBox>
